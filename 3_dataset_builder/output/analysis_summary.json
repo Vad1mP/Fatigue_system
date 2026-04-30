@@ -1,0 +1,15 @@
+{
+  "n_rows": 22,
+  "n_columns": 520,
+  "date_min": "2026-04-01",
+  "date_max": "2026-04-22",
+  "n_targets": 4,
+  "n_usable_targets": 4,
+  "n_features_total": 510,
+  "n_usable_features": 374,
+  "warnings": [
+    "context_computed: suspicious column names: ['Sleep_qality', 'Sleepness_before', 'Sikness_before', 'Slakness_before', 'Speepness_after', 'Sikness_after', 'Slakness_after']",
+    "105 features have low uniqueness or low IQR",
+    "4 targets have ML/data readiness warnings"
+  ]
+}

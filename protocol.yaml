@@ -1,0 +1,1011 @@
+protocol:
+  name: fatigue_monitoring_v1
+  version: '1.0'
+  description: Protocol for individual fatigue assessment using single-lead ECG
+subject_defaults:
+  sampling_rate_mode: fixed
+  sampling_rate_hz: 234.45
+  adc:
+    min: 0
+    max: 675
+storage:
+  date_format: '%d.%m.%Y'
+  phases_as_directories: true
+  default_signal_extension: .csv
+defaults:
+  review_mode: bad_only
+  review_scope: record
+  segmentation: full_record
+  quality_profile: resting
+  feature_groups:
+  - hrv_time
+  - hrv_extended
+  - morphology
+phases:
+- id: before
+  label: Before training
+- id: after
+  label: After training
+- id: before2
+  label: Before second training
+- id: after2
+  label: After second training
+quality_profiles:
+  resting:
+    expected_hr_bpm:
+      min: 40
+      max: 130
+    hrv:
+      enabled: true
+    morphology:
+      enabled: true
+      expected_qrs_duration_ms:
+        min: 40
+        max: 140
+      require_p_wave: false
+      require_t_wave: false
+  standing:
+    expected_hr_bpm:
+      min: 45
+      max: 160
+    hrv:
+      enabled: true
+    morphology:
+      enabled: true
+      expected_qrs_duration_ms:
+        min: 40
+        max: 140
+      require_p_wave: false
+      require_t_wave: false
+  post_squat:
+    expected_hr_bpm:
+      min: 60
+      max: 220
+    hrv:
+      enabled: true
+    morphology:
+      enabled: false
+  breath_hold:
+    expected_hr_bpm:
+      min: 35
+      max: 180
+    hrv:
+      enabled: true
+    morphology:
+      enabled: true
+      expected_qrs_duration_ms:
+        min: 40
+        max: 150
+      require_p_wave: false
+      require_t_wave: false
+segmentation_profiles:
+  full_record:
+    mode: full
+  fixed_windows_5s:
+    mode: fixed_windows
+    window_sec: 5.0
+    step_sec: 5.0
+    min_window_sec: 2.0
+    drop_last_short_window: true
+  breath_hold_default:
+    mode: named_subsegments
+    segments:
+    - label: full
+      start_sec: 0.0
+      end_sec: full
+    - label: start
+      start_sec: 0.0
+      end_sec: 5.0
+    - label: end
+      relative_to: end
+      duration_sec: 5.0
+recordings:
+- id: sit
+  file_names:
+  - sit.csv
+  expected_duration_sec: 60
+  mode: static
+  quality_profile: resting
+  segmentation: full_record
+  review_scope: record
+  aggregation_role: rest_reference
+- id: stand
+  file_names:
+  - stand.csv
+  expected_duration_sec: 60
+  mode: static
+  quality_profile: standing
+  segmentation: full_record
+  review_scope: record
+  aggregation_role: orthostatic_test
+- id: squat
+  file_names:
+  - squat.csv
+  expected_duration_sec: 60
+  mode: windowed
+  quality_profile: post_squat
+  segmentation: fixed_windows_5s
+  review_scope: segment
+  feature_groups:
+  - hrv_time
+  - hrv_extended
+  aggregation_role: functional_load_test
+- id: breath_in
+  file_names:
+  - breath_in.csv
+  expected_duration_sec: null
+  mode: breath_hold
+  quality_profile: breath_hold
+  segmentation: breath_hold_default
+  review_scope: segment
+  aggregation_role: respiratory_test
+- id: breath_out
+  file_names:
+  - breath_out.csv
+  expected_duration_sec: null
+  mode: breath_hold
+  quality_profile: breath_hold
+  segmentation: breath_hold_default
+  review_scope: segment
+  aggregation_role: respiratory_test
+- id: long
+  file_names:
+  - long.csv
+  expected_duration_sec: 300
+  mode: static
+  quality_profile: resting
+  segmentation: full_record
+  review_scope: record
+  aggregation_role: long_rest_reference
+derived_features:
+  input: features_protocol.csv
+  output: features_derived.csv
+  defaults:
+    missing_policy: nan
+    quality_policy: valid_only
+    baseline_include_current_day: false
+    feature_set: ecg_full
+    formula_validation: warn
+  feature_sets:
+    hrv_core:
+      features:
+      - hrv_time__MeanHR_bpm
+      - hrv_time__MeanNN_ms
+      - hrv_time__SDNN_ms
+      - hrv_time__RMSSD_ms
+      - hrv_time__pNN50_percent
+      - hrv_freq__LF_power
+      - hrv_freq__HF_power
+      - hrv_freq__LF_HF_ratio
+    morphology_core:
+      features:
+      - morph_qrs__QRS_duration_ms
+      - morph_qrs__QRS_area
+      - morph_qrs__QRS_main_amp
+      - morph_qrs__R_width_half_ms
+      - morph_t__T_amp
+      - morph_t__T_area
+      - morph_t__RT_interval_ms
+      - morph_t__QT_like_ms
+    hrv_full:
+      include_prefixes:
+      - hrv_time__
+      - hrv_freq__
+      - hrv_nonlinear__
+      exclude:
+      - hrv_time__n_rr
+    morphology_full:
+      include_prefixes:
+      - morph_p__
+      - morph_qrs__
+      - morph_t__
+      exclude_contains:
+      - _idx
+      - threshold
+      - Threshold
+      - Noise
+      - noise
+      - snr
+      - SNR
+      exclude:
+      - morph_qrs__QRS_main_idx
+      - morph_qrs__Q_idx
+      - morph_qrs__S_idx
+      - morph_qrs__QRS_onset_idx
+      - morph_qrs__QRS_offset_idx
+      - morph_qrs__R_idx
+      - morph_p__P_onset_idx
+      - morph_p__P_offset_idx
+      - morph_p__P_peak_idx
+      - morph_t__T_onset_idx
+      - morph_t__T_offset_idx
+      - morph_t__T_peak_idx
+    ecg_full:
+      include_feature_sets:
+      - hrv_full
+      - morphology_full
+  sources:
+    sit_before:
+      phase: before
+      recording: sit
+      segment: full
+    stand_before:
+      phase: before
+      recording: stand
+      segment: full
+    long_before:
+      phase: before
+      recording: long
+      segment: full
+    sit_after:
+      phase: after
+      recording: sit
+      segment: full
+    stand_after:
+      phase: after
+      recording: stand
+      segment: full
+    long_after:
+      phase: after
+      recording: long
+      segment: full
+    breath_in_start_before:
+      phase: before
+      recording: breath_in
+      segment: start
+    breath_in_end_before:
+      phase: before
+      recording: breath_in
+      segment: end
+  operations:
+  - id: orthostatic_before
+    type: pairwise
+    left: stand_before
+    right: sit_before
+    feature_set: hrv_core
+    formulas:
+    - delta
+    - percent_delta
+    - ratio
+  - id: orthostatic_after
+    type: pairwise
+    left: stand_after
+    right: sit_after
+    feature_set: hrv_core
+    formulas:
+    - delta
+    - percent_delta
+    - ratio
+  - id: training_response
+    type: pairwise
+    left: long_after
+    right: long_before
+    feature_set: ecg_full
+    formulas:
+    - delta
+    - percent_delta
+  - id: training_response_hrv_ratio
+    type: pairwise
+    left: long_after
+    right: long_before
+    feature_set: hrv_core
+    formulas:
+    - ratio
+    - log_ratio
+  - id: breath_in_response_before
+    type: pairwise
+    left: breath_in_end_before
+    right: breath_in_start_before
+    feature_set: hrv_core
+    formulas:
+    - delta
+    - percent_delta
+  - id: orthostatic_training_response
+    type: pairwise_derived
+    left_operation: orthostatic_after
+    right_operation: orthostatic_before
+    base_formulas:
+    - delta
+    - percent_delta
+    - ratio
+    formulas:
+    - delta
+  baseline_profiles:
+    rolling_7d_median:
+      method: rolling
+      window_days: 7
+      min_periods: 3
+      statistic: median
+      scale: iqr
+  baseline_deviations:
+  - id: baseline_dev_sit_before
+    source: sit_before
+    feature_set: hrv_core
+    baseline_profile: rolling_7d_median
+    formulas:
+    - delta
+    - robust_z
+context_features:
+  input: daily_data_extended.csv
+  output: context_derived.csv
+  date_column: Date
+  parsing:
+    sep: ;
+    decimal: ','
+    encoding: utf-8-sig
+  non_numeric_columns:
+  - Date
+  - Time_to_sleep
+  - Training_type
+  - record_time
+  - Comments
+  defaults:
+    missing_policy: nan
+    baseline_include_current_day: false
+  computed_columns:
+  - id: PulsePressure_before
+    type: difference
+    left: Pressure_sys_before
+    right: Pressure_dia_before
+  - id: PulsePressure_after
+    type: difference
+    left: Pressure_sys_after
+    right: Pressure_dia_after
+  - id: MAP_before
+    type: weighted_sum
+    weights:
+      Pressure_sys_before: 0.333333
+      Pressure_dia_before: 0.666667
+  - id: MAP_after
+    type: weighted_sum
+    weights:
+      Pressure_sys_after: 0.333333
+      Pressure_dia_after: 0.666667
+  - id: sRPE_load
+    type: product
+    columns:
+    - train_minutes
+    - RPE
+  - id: zone_weighted_load
+    type: weighted_sum
+    weights:
+      1_zone: 1
+      2_zone: 2
+      3_zone: 3
+      4_zone: 4
+      5_zone: 5
+  - id: moderate_plus_minutes
+    type: sum
+    columns:
+    - 3_zone
+    - 4_zone
+    - 5_zone
+  - id: high_intensity_minutes
+    type: sum
+    columns:
+    - 4_zone
+    - 5_zone
+  - id: high_intensity_ratio
+    type: ratio
+    numerator: high_intensity_minutes
+    denominator: train_minutes
+  - id: zone_avg_intensity
+    type: ratio
+    numerator: zone_weighted_load
+    denominator: train_minutes
+  - id: subjective_strain_before
+    type: composite_mean
+    components:
+    - column: Sleepness_before
+    - column: Headache_before
+    - column: Irritability_before
+    - column: Sikness_before
+    - column: Slakness_before
+    - column: Muscle_aches_before
+    - column: Fatigue_before
+    - column: Pain_before
+    - column: Muscle_fatigue_before
+    - column: Cognitive_fatigue_before
+    - column: Test_heaviness_before
+  - id: subjective_strain_after
+    type: composite_mean
+    components:
+    - column: Speepness_after
+    - column: Headache_after
+    - column: Irritability_after
+    - column: Sikness_after
+    - column: Slakness_after
+    - column: Muscle_aches_after
+    - column: Fatigue_after
+    - column: Pain_after
+    - column: Muscle_fatigue_after
+    - column: Cognitive_fatigue_after
+    - column: Test_heaviness_after
+  - id: readiness_before
+    type: composite_mean
+    components:
+    - column: Wellbeing_before
+    - column: Motivation_before
+    - column: Desire_to_train
+    - column: Fatigue_before
+      invert: true
+      max_value: 10
+      min_value: 0
+    - column: DOMS
+      invert: true
+      max_value: 10
+      min_value: 0
+    - column: Stress
+      invert: true
+      max_value: 10
+      min_value: 0
+  feature_sets:
+    sleep_core:
+      features:
+      - Sleep_hours
+      - Day_Sleep_hours
+      - Sleep_qality
+      - Difficulty_falling_asleep
+      - Fragmented_sleep
+      - Undersleeped
+      - Oversleeped
+      - Wakeup_class
+    morning_state_core:
+      features:
+      - Morning_RHR
+      - Stress
+      - Cognitive_load
+      - DOMS
+      - Fatigue_before
+      - Muscle_fatigue_before
+      - Cognitive_fatigue_before
+      - Wellbeing_before
+      - Motivation_before
+      - Desire_to_train
+      - subjective_strain_before
+      - readiness_before
+    pressure_reaction_before:
+      features:
+      - Pressure_sys_before
+      - Pressure_dia_before
+      - PulsePressure_before
+      - MAP_before
+      - RHR_before
+      - Reaction_time_before_ms
+    training_load_core:
+      features:
+      - train_minutes
+      - RPE
+      - HR_avg
+      - sRPE_load
+      - zone_weighted_load
+      - zone_avg_intensity
+      - moderate_plus_minutes
+      - high_intensity_minutes
+      - high_intensity_ratio
+    baseline_context_continuous:
+      features:
+      - Sleep_hours
+      - Day_Sleep_hours
+      - Sleep_qality
+      - Morning_RHR
+      - Stress
+      - Cognitive_load
+      - DOMS
+      - Fatigue_before
+      - Muscle_fatigue_before
+      - Cognitive_fatigue_before
+      - Wellbeing_before
+      - Motivation_before
+      - Desire_to_train
+      - subjective_strain_before
+      - readiness_before
+      - Pressure_sys_before
+      - Pressure_dia_before
+      - PulsePressure_before
+      - MAP_before
+      - RHR_before
+      - Reaction_time_before_ms
+    baseline_context_flags:
+      features:
+      - Difficulty_falling_asleep
+      - Fragmented_sleep
+      - Undersleeped
+      - Oversleeped
+      - Wakeup_class
+  baseline_profiles:
+    rolling_7d_median:
+      method: rolling
+      window_days: 7
+      min_periods: 3
+      statistic: median
+      scale: iqr
+  operations:
+  - id: subjective_before_after_response
+    type: pairwise_columns
+    formulas:
+    - delta
+    pairs:
+    - feature: Fatigue
+      left: Fatigue_after
+      right: Fatigue_before
+    - feature: Sleepness
+      left: Speepness_after
+      right: Sleepness_before
+    - feature: Motivation
+      left: Motivation_after
+      right: Motivation_before
+    - feature: Headache
+      left: Headache_after
+      right: Headache_before
+    - feature: Irritability
+      left: Irritability_after
+      right: Irritability_before
+    - feature: Pain
+      left: Pain_after
+      right: Pain_before
+    - feature: Sikness
+      left: Sikness_after
+      right: Sikness_before
+    - feature: Slakness
+      left: Slakness_after
+      right: Slakness_before
+    - feature: Muscle_aches
+      left: Muscle_aches_after
+      right: Muscle_aches_before
+    - feature: Muscle_fatigue
+      left: Muscle_fatigue_after
+      right: Muscle_fatigue_before
+    - feature: Cognitive_fatigue
+      left: Cognitive_fatigue_after
+      right: Cognitive_fatigue_before
+    - feature: Wellbeing
+      left: Wellbeing_after
+      right: Wellbeing_before
+    - feature: Test_heaviness
+      left: Test_heaviness_after
+      right: Test_heaviness_before
+    - feature: subjective_strain
+      left: subjective_strain_after
+      right: subjective_strain_before
+  - id: physio_before_after_response
+    type: pairwise_columns
+    formulas:
+    - delta
+    - percent_delta
+    pairs:
+    - feature: Reaction_time_ms
+      left: Reaction_time_after_ms
+      right: Reaction_time_before_ms
+    - feature: Pressure_sys
+      left: Pressure_sys_after
+      right: Pressure_sys_before
+    - feature: Pressure_dia
+      left: Pressure_dia_after
+      right: Pressure_dia_before
+    - feature: PulsePressure
+      left: PulsePressure_after
+      right: PulsePressure_before
+    - feature: MAP
+      left: MAP_after
+      right: MAP_before
+    - feature: RHR
+      left: RHR_after
+      right: RHR_before
+  - id: baseline_dev_context_before
+    type: baseline_deviation
+    feature_set: baseline_context_continuous
+    baseline_profile: rolling_7d_median
+    formulas:
+    - delta
+    - robust_z
+  - id: baseline_dev_context_flags
+    type: baseline_deviation
+    feature_set: baseline_context_flags
+    baseline_profile: rolling_7d_median
+    formulas:
+    - delta
+  - id: day_to_day_context_change
+    type: lagged_pairwise
+    feature_set: baseline_context_continuous
+    lag_days: 1
+    formulas:
+    - delta
+  - id: training_load_previous_7d
+    type: rolling_aggregate
+    feature_set: training_load_core
+    window_days: 7
+    min_periods: 1
+    include_current_day: false
+    aggregations:
+    - sum
+    - mean
+
+analysis_dataset:
+  enabled: true
+  tables:
+    raw_ecg_features:
+      path: features_protocol.csv
+      required: true
+      date_column: date
+      date_format: '%d.%m.%Y'
+      csv:
+        sep: ','
+        decimal: .
+        encoding: utf-8-sig
+    ecg_derived:
+      path: features_derived.csv
+      required: true
+      date_column: date
+      date_format: '%Y-%m-%d'
+      csv:
+        sep: ','
+        decimal: .
+        encoding: utf-8
+    context_computed:
+      path: context_computed.csv
+      required: true
+      date_column: date
+      date_format: '%Y-%m-%d'
+      csv:
+        sep: ','
+        decimal: .
+        encoding: utf-8-sig
+    context_derived:
+      path: context_derived.csv
+      required: true
+      date_column: date
+      date_format: '%Y-%m-%d'
+      csv:
+        sep: ','
+        decimal: .
+        encoding: utf-8
+  output:
+    dataset: analysis_dataset.csv
+    feature_catalog: analysis_feature_catalog.csv
+    summary_json: analysis_summary.json
+    report_markdown: analysis_report.md
+    report_dir: analysis_report
+  unit:
+    mode: date
+    date_column: date
+  join:
+    how: outer
+    base_table: context_computed
+    sort_by_date: true
+  row_filter:
+    enabled: false
+    mode: none
+  schemas:
+    raw_ecg_features:
+      date: date
+      phase: phase
+      recording: record_type
+      segment: segment_label
+      hrv_valid: hrv_validated
+      morphology_valid: morphology_validated
+    ecg_derived:
+      date: date
+      operation_id: operation_id
+      operation_type: operation_type
+      feature: feature
+      formula: formula
+      base_formula: base_formula
+      value: value
+      valid: valid
+      reason: reason
+    context_derived:
+      date: date
+      operation_id: operation_id
+      operation_type: operation_type
+      feature: feature
+      formula: formula
+      base_formula: base_formula
+      value: value
+      valid: valid
+      reason: reason
+  feature_set_resolution:
+    mode: strict
+    prefix_fallback:
+      enabled: false
+  column_naming:
+    separator: __
+    prefixes:
+      meta: meta
+      qc: qc
+      raw_ecg: raw_ecg
+      ecg_derived: ecg_der
+      context_computed: ctx
+      context_derived: ctx_der
+      target: target
+      covariate: covar
+    raw_ecg_template: '{prefix}__{phase}__{recording}__{segment}__{feature}'
+    ecg_derived_template: '{prefix}__{operation_id}__{formula_key}__{feature}'
+    context_computed_template: '{prefix}__{feature}'
+    context_derived_template: '{prefix}__{operation_id}__{formula_key}__{feature}'
+    target_template: '{prefix}__{id}'
+    covariate_template: '{prefix}__{id}'
+  include:
+    metadata:
+      enabled: true
+      columns:
+      - date
+    qc_summary:
+      enabled: true
+      columns:
+      - n_ecg_records_expected
+      - n_ecg_records_found
+      - n_ecg_records_valid_hrv
+      - n_ecg_records_valid_morphology
+      - complete_core_day
+    raw_ecg:
+      enabled: true
+      sources:
+      - sit_before
+      - stand_before
+      - long_before
+      - sit_after
+      - stand_after
+      - long_after
+      - breath_in_start_before
+      - breath_in_end_before
+      feature_sets:
+      - hrv_core
+      - morphology_core
+      quality_policy: valid_only
+    ecg_derived:
+      enabled: true
+      operations:
+      - orthostatic_before
+      - orthostatic_after
+      - training_response
+      - training_response_hrv_ratio
+      - breath_in_response_before
+      - orthostatic_training_response
+      - baseline_dev_sit_before
+      quality_policy: valid_only
+    context_computed:
+      enabled: true
+      feature_sets:
+      - sleep_core
+      - morning_state_core
+      - pressure_reaction_before
+      - training_load_core
+    context_derived:
+      enabled: true
+      operations:
+      - subjective_before_after_response
+      - physio_before_after_response
+      - baseline_dev_context_before
+      - baseline_dev_context_flags
+      - day_to_day_context_change
+      - training_load_previous_7d
+  targets:
+  - id: subjective_strain_delta
+    label: Acute subjective strain response
+    source: context_derived
+    operation_id: subjective_before_after_response
+    feature: subjective_strain
+    formula: delta
+    direction: higher_worse
+    horizon: acute
+    data_type: numeric
+    scale_type: ordinal
+  - id: fatigue_delta
+    label: Acute subjective fatigue response
+    source: context_derived
+    operation_id: subjective_before_after_response
+    feature: Fatigue
+    formula: delta
+    direction: higher_worse
+    horizon: acute
+    data_type: numeric
+    scale_type: ordinal
+  - id: reaction_time_delta
+    label: Acute reaction time response
+    source: context_derived
+    operation_id: physio_before_after_response
+    feature: Reaction_time_ms
+    formula: delta
+    direction: higher_worse
+    horizon: acute
+    data_type: numeric
+    scale_type: continuous
+  - id: readiness_before
+    label: Pre-training readiness
+    source: context_computed
+    column: readiness_before
+    direction: higher_better
+    horizon: pre_training
+    data_type: numeric
+    scale_type: ordinal
+  covariates:
+  - id: training_load_previous_7d
+    label: Previous 7-day accumulated sRPE load
+    source: context_derived
+    operation_id: training_load_previous_7d
+    feature: sRPE_load
+    formula: rolling_7d_sum
+    direction: higher_load
+    horizon: previous_7d
+    data_type: numeric
+    scale_type: continuous
+  - id: sleep_hours
+    label: Sleep duration
+    source: context_computed
+    column: Sleep_hours
+    direction: higher_better
+    horizon: same_day
+    data_type: numeric
+    scale_type: continuous
+  - id: sRPE_load
+    label: Current day sRPE training load
+    source: context_computed
+    column: sRPE_load
+    direction: higher_load
+    horizon: same_day
+    data_type: numeric
+    scale_type: continuous
+  quality_rules:
+    feature:
+      min_valid_n: 10
+      min_valid_ratio: 0.6
+      min_unique_values: 5
+      min_iqr: 1.0e-09
+    target:
+      min_valid_n: 10
+      min_valid_ratio: 0.6
+      min_unique_values: 4
+      min_iqr: 1.0e-09
+    feature_target_overlap:
+      min_overlap_n: 10
+      min_overlap_ratio: 0.5
+    ml_readiness:
+      min_samples_regression: 15
+      min_samples_classification: 20
+      min_class_count: 5
+      max_features_to_samples_ratio: 0.5
+  core_day_definition:
+    required_ecg_sources:
+    - sit_before
+    - stand_before
+    - long_before
+    - sit_after
+    - stand_after
+    - long_after
+    required_context_columns:
+    - Fatigue_before
+    - Fatigue_after
+    - subjective_strain_before
+    - subjective_strain_after
+    - readiness_before
+    - train_minutes
+    - RPE
+    require_hrv_valid: true
+    require_morphology_valid: false
+  reports:
+    save_csv: true
+    save_markdown: true
+    save_json: true
+    sections:
+      summary:
+        enabled: true
+      coverage_by_day:
+        enabled: true
+        output: report_coverage_by_day.csv
+      ecg_quality:
+        enabled: true
+        output: report_ecg_quality.csv
+      context_completeness:
+        enabled: true
+        output: report_context_completeness.csv
+      derived_operations:
+        enabled: true
+        output: report_derived_operations.csv
+      targets:
+        enabled: true
+        output: report_targets.csv
+      feature_availability:
+        enabled: true
+        output: report_feature_availability.csv
+      feature_target_overlap:
+        enabled: true
+        output: report_feature_target_overlap.csv
+      ml_readiness:
+        enabled: true
+        output: report_ml_readiness.csv
+  warnings:
+    detect_suspicious_column_names: true
+    detect_all_missing_columns: true
+    detect_constant_features: true
+    detect_duplicate_columns: true
+    detect_target_leakage_candidates: true
+    detect_low_overlap_targets: true
+
+feature_analysis:
+  enabled: true
+
+  inputs:
+    dataset: "analysis_dataset.csv"
+    feature_catalog: "analysis_feature_catalog.csv"
+
+  outputs:
+    output_dir: "feature_analysis_v3"
+
+  # Этап 1: диагностика согласованности target.
+  target_analysis:
+    enabled: true
+    # Внутри анализа все target приводятся к смыслу: больше = хуже / больше утомление.
+    # higher_worse используется как есть, higher_better умножается на -1.
+    targets:
+      - column: "target__subjective_strain_delta"
+        direction: "higher_worse"
+        weight: 1.0
+      - column: "target__fatigue_delta"
+        direction: "higher_worse"
+        weight: 1.0
+      - column: "target__reaction_time_delta"
+        direction: "higher_worse"
+        weight: 1.0
+      # readiness_before лучше анализировать отдельной группой pre-training targets,
+      # а не смешивать с acute after-before response.
+      # - column: "target__readiness_before"
+      #   direction: "higher_better"
+      #   weight: 1.0
+
+  # Этап 2: выбор input-признаков для валидации.
+  feature_scope:
+    selection_mode: "auto"      # auto | manual | auto_plus_manual
+    ecg_only: true              # true = валидируем только ЭКГ-признаки
+    access_mode: "all"          # all | before | after | delta
+    # access_modes: ["before", "delta"]
+    manual_features: []
+    exclude_roles:
+      - "target"
+      - "meta"
+      - "qc"
+      - "technical"
+
+  leakage_control:
+    enabled: true
+    exclude_exact_target_duplicates: true
+    exclude_same_source_operation: true
+    # Самый простой и защищаемый способ исключать компоненты target вручную.
+    forbidden_features_by_target: {}
+
+  quality_rules:
+    min_overlap_n: 10
+    max_missing_ratio: 0.5
+    min_unique_values: 4
+
+  association:
+    method: "spearman"
+    min_abs_spearman: 0.3
+    leave_one_out_direction_stability: true
+    min_direction_stability: 0.7
+
+  # Строгая multi-target валидация: признак должен пройти все выбранные target
+  # и сохранить одно направление связи после нормализации target.
+  multi_target_validation:
+    require_pass_all_targets: true
+    require_consistent_direction: true
+    min_cross_target_direction_consistency: 1.0
+    # Более мягкий режим, если target много и они не идеально согласованы:
+    # require_pass_all_targets: false
+    # min_targets_pass: 2
+    # min_cross_target_direction_consistency: 0.67
+
+  redundancy:
+    enabled: true
+    method: "spearman"
+    threshold_abs_corr: 0.85
+    choose_representative_by: "final_rank_score"
+    keep_redundant_alternatives: true
+
+  ranking:
+    rank_score:
+      formula: "weighted_sum"
+      weights:
+        abs_spearman: 0.7
+        direction_stability: 0.3
+

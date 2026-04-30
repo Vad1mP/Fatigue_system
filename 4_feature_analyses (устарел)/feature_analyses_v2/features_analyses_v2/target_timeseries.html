@@ -1,0 +1,125 @@
+<!doctype html><html><head><meta charset='utf-8'><title>Target analysis</title>
+<style>body{font-family:Arial,sans-serif;margin:24px;line-height:1.35} table{border-collapse:collapse;margin:16px 0} th,td{border:1px solid #ddd;padding:6px 8px;font-size:13px} th{background:#f4f4f4} .chart{margin:20px 0;padding:12px;border:1px solid #ddd;border-radius:8px}.note{color:#555;max-width:900px}</style></head><body>
+<h1>Target analysis</h1>
+<p class='note'>All target values are normalized so that higher values mean worse state / stronger fatigue. Targets with direction <code>higher_better</code> are multiplied by -1 before correlations are computed.</p>
+<h2>Target quality</h2><table><tr>
+<th>target</th>
+<th>direction</th>
+<th>horizon</th>
+<th>n_valid</th>
+<th>n_unique</th>
+<th>missing_ratio</th>
+<th>median</th>
+<th>iqr</th>
+</tr>
+<tr>
+<td>target__subjective_strain_delta</td>
+<td>higher_worse</td>
+<td></td>
+<td>21</td>
+<td>21</td>
+<td>0.0454545454545</td>
+<td>0.252525252525</td>
+<td>1.27272727273</td>
+</tr>
+<tr>
+<td>target__fatigue_delta</td>
+<td>higher_worse</td>
+<td></td>
+<td>21</td>
+<td>8</td>
+<td>0.0454545454545</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>target__reaction_time_delta</td>
+<td>higher_worse</td>
+<td></td>
+<td>21</td>
+<td>14</td>
+<td>0.0454545454545</td>
+<td>1</td>
+<td>9</td>
+</tr>
+</table>
+<h2>Normalized target time series</h2>
+<div class='chart'>
+<h3>target__subjective_strain_delta</h3>
+
+<svg width='900' height='260' viewBox='0 0 900 260' xmlns='http://www.w3.org/2000/svg'>
+  <rect x='0' y='0' width='900' height='260' fill='white'/>
+  <line x1='55' y1='215' x2='885' y2='215' stroke='#999'/>
+  <line x1='55' y1='215' x2='55' y2='20' stroke='#999'/>
+  <line x1='55' y1='117.5' x2='885' y2='117.5' stroke='#eee'/>
+  <text x='5' y='25.0' font-size='12'>2.625</text>
+  <text x='5' y='122.5' font-size='12'>0.4186</text>
+  <text x='5' y='220.0' font-size='12'>-1.788</text>
+  <text x='55' y='248' font-size='12'>2026-04-01</text>
+  <text x='775.0' y='248' font-size='12'>2026-04-22</text>
+  <polyline fill='none' stroke='black' stroke-width='2' points='55.00,96.72 94.52,20.00 134.05,215.00 173.57,165.45 213.10,131.09 252.62,124.84 292.14,33.33 331.67,127.96 371.19,91.81 410.71,87.79 450.24,136.00 489.76,59.67 529.29,119.93 568.81,154.88 608.33,148.05 647.86,103.86 687.38,144.03 766.43,160.90 805.95,95.82 845.48,148.05 885.00,79.76'/>
+  <circle cx='55.00' cy='96.72' r='3'><title>2026-04-01: 0.8889</title></circle><circle cx='94.52' cy='20.00' r='3'><title>2026-04-02: 2.625</title></circle><circle cx='134.05' cy='215.00' r='3'><title>2026-04-03: -1.788</title></circle><circle cx='173.57' cy='165.45' r='3'><title>2026-04-04: -0.6667</title></circle><circle cx='213.10' cy='131.09' r='3'><title>2026-04-05: 0.1111</title></circle><circle cx='252.62' cy='124.84' r='3'><title>2026-04-06: 0.2525</title></circle><circle cx='292.14' cy='33.33' r='3'><title>2026-04-07: 2.323</title></circle><circle cx='331.67' cy='127.96' r='3'><title>2026-04-08: 0.1818</title></circle><circle cx='371.19' cy='91.81' r='3'><title>2026-04-09: 1</title></circle><circle cx='410.71' cy='87.79' r='3'><title>2026-04-10: 1.091</title></circle><circle cx='450.24' cy='136.00' r='3'><title>2026-04-11: 0</title></circle><circle cx='489.76' cy='59.67' r='3'><title>2026-04-12: 1.727</title></circle><circle cx='529.29' cy='119.93' r='3'><title>2026-04-13: 0.3636</title></circle><circle cx='568.81' cy='154.88' r='3'><title>2026-04-14: -0.4273</title></circle><circle cx='608.33' cy='148.05' r='3'><title>2026-04-15: -0.2727</title></circle><circle cx='647.86' cy='103.86' r='3'><title>2026-04-16: 0.7273</title></circle><circle cx='687.38' cy='144.03' r='3'><title>2026-04-17: -0.1818</title></circle><circle cx='766.43' cy='160.90' r='3'><title>2026-04-19: -0.5636</title></circle><circle cx='805.95' cy='95.82' r='3'><title>2026-04-20: 0.9091</title></circle><circle cx='845.48' cy='148.05' r='3'><title>2026-04-21: -0.2727</title></circle><circle cx='885.00' cy='79.76' r='3'><title>2026-04-22: 1.273</title></circle>
+</svg>
+
+</div>
+<div class='chart'>
+<h3>target__fatigue_delta</h3>
+
+<svg width='900' height='260' viewBox='0 0 900 260' xmlns='http://www.w3.org/2000/svg'>
+  <rect x='0' y='0' width='900' height='260' fill='white'/>
+  <line x1='55' y1='215' x2='885' y2='215' stroke='#999'/>
+  <line x1='55' y1='215' x2='55' y2='20' stroke='#999'/>
+  <line x1='55' y1='117.5' x2='885' y2='117.5' stroke='#eee'/>
+  <text x='5' y='25.0' font-size='12'>5</text>
+  <text x='5' y='122.5' font-size='12'>1</text>
+  <text x='5' y='220.0' font-size='12'>-3</text>
+  <text x='55' y='248' font-size='12'>2026-04-01</text>
+  <text x='775.0' y='248' font-size='12'>2026-04-22</text>
+  <polyline fill='none' stroke='black' stroke-width='2' points='55.00,93.12 94.52,44.38 134.05,215.00 173.57,166.25 213.10,117.50 252.62,141.88 292.14,20.00 331.67,117.50 371.19,68.75 410.71,141.88 450.24,93.12 489.76,68.75 529.29,141.88 568.81,141.88 608.33,166.25 647.86,93.12 687.38,141.88 766.43,166.25 805.95,117.50 845.48,141.88 885.00,93.12'/>
+  <circle cx='55.00' cy='93.12' r='3'><title>2026-04-01: 2</title></circle><circle cx='94.52' cy='44.38' r='3'><title>2026-04-02: 4</title></circle><circle cx='134.05' cy='215.00' r='3'><title>2026-04-03: -3</title></circle><circle cx='173.57' cy='166.25' r='3'><title>2026-04-04: -1</title></circle><circle cx='213.10' cy='117.50' r='3'><title>2026-04-05: 1</title></circle><circle cx='252.62' cy='141.88' r='3'><title>2026-04-06: 0</title></circle><circle cx='292.14' cy='20.00' r='3'><title>2026-04-07: 5</title></circle><circle cx='331.67' cy='117.50' r='3'><title>2026-04-08: 1</title></circle><circle cx='371.19' cy='68.75' r='3'><title>2026-04-09: 3</title></circle><circle cx='410.71' cy='141.88' r='3'><title>2026-04-10: 0</title></circle><circle cx='450.24' cy='93.12' r='3'><title>2026-04-11: 2</title></circle><circle cx='489.76' cy='68.75' r='3'><title>2026-04-12: 3</title></circle><circle cx='529.29' cy='141.88' r='3'><title>2026-04-13: 0</title></circle><circle cx='568.81' cy='141.88' r='3'><title>2026-04-14: 0</title></circle><circle cx='608.33' cy='166.25' r='3'><title>2026-04-15: -1</title></circle><circle cx='647.86' cy='93.12' r='3'><title>2026-04-16: 2</title></circle><circle cx='687.38' cy='141.88' r='3'><title>2026-04-17: 0</title></circle><circle cx='766.43' cy='166.25' r='3'><title>2026-04-19: -1</title></circle><circle cx='805.95' cy='117.50' r='3'><title>2026-04-20: 1</title></circle><circle cx='845.48' cy='141.88' r='3'><title>2026-04-21: 0</title></circle><circle cx='885.00' cy='93.12' r='3'><title>2026-04-22: 2</title></circle>
+</svg>
+
+</div>
+<div class='chart'>
+<h3>target__reaction_time_delta</h3>
+
+<svg width='900' height='260' viewBox='0 0 900 260' xmlns='http://www.w3.org/2000/svg'>
+  <rect x='0' y='0' width='900' height='260' fill='white'/>
+  <line x1='55' y1='215' x2='885' y2='215' stroke='#999'/>
+  <line x1='55' y1='215' x2='55' y2='20' stroke='#999'/>
+  <line x1='55' y1='117.5' x2='885' y2='117.5' stroke='#eee'/>
+  <text x='5' y='25.0' font-size='12'>17</text>
+  <text x='5' y='122.5' font-size='12'>2.5</text>
+  <text x='5' y='220.0' font-size='12'>-12</text>
+  <text x='55' y='248' font-size='12'>2026-04-01</text>
+  <text x='775.0' y='248' font-size='12'>2026-04-22</text>
+  <polyline fill='none' stroke='black' stroke-width='2' points='55.00,40.17 94.52,127.59 134.05,215.00 173.57,20.00 213.10,127.59 252.62,147.76 292.14,114.14 331.67,147.76 371.19,107.41 410.71,100.69 450.24,100.69 489.76,20.00 529.29,181.38 568.81,161.21 608.33,181.38 647.86,120.86 687.38,161.21 766.43,134.31 805.95,181.38 845.48,87.24 885.00,80.52'/>
+  <circle cx='55.00' cy='40.17' r='3'><title>2026-04-01: 14</title></circle><circle cx='94.52' cy='127.59' r='3'><title>2026-04-02: 1</title></circle><circle cx='134.05' cy='215.00' r='3'><title>2026-04-03: -12</title></circle><circle cx='173.57' cy='20.00' r='3'><title>2026-04-04: 17</title></circle><circle cx='213.10' cy='127.59' r='3'><title>2026-04-05: 1</title></circle><circle cx='252.62' cy='147.76' r='3'><title>2026-04-06: -2</title></circle><circle cx='292.14' cy='114.14' r='3'><title>2026-04-07: 3</title></circle><circle cx='331.67' cy='147.76' r='3'><title>2026-04-08: -2</title></circle><circle cx='371.19' cy='107.41' r='3'><title>2026-04-09: 4</title></circle><circle cx='410.71' cy='100.69' r='3'><title>2026-04-10: 5</title></circle><circle cx='450.24' cy='100.69' r='3'><title>2026-04-11: 5</title></circle><circle cx='489.76' cy='20.00' r='3'><title>2026-04-12: 17</title></circle><circle cx='529.29' cy='181.38' r='3'><title>2026-04-13: -7</title></circle><circle cx='568.81' cy='161.21' r='3'><title>2026-04-14: -4</title></circle><circle cx='608.33' cy='181.38' r='3'><title>2026-04-15: -7</title></circle><circle cx='647.86' cy='120.86' r='3'><title>2026-04-16: 2</title></circle><circle cx='687.38' cy='161.21' r='3'><title>2026-04-17: -4</title></circle><circle cx='766.43' cy='134.31' r='3'><title>2026-04-19: 0</title></circle><circle cx='805.95' cy='181.38' r='3'><title>2026-04-20: -7</title></circle><circle cx='845.48' cy='87.24' r='3'><title>2026-04-21: 7</title></circle><circle cx='885.00' cy='80.52' r='3'><title>2026-04-22: 8</title></circle>
+</svg>
+
+</div>
+<h2>Target correlation matrix, Spearman after direction normalization</h2><table><tr><th>target</th>
+<th>target__subjective_strain_delta</th>
+<th>target__fatigue_delta</th>
+<th>target__reaction_time_delta</th>
+</tr>
+<tr>
+<td>target__subjective_strain_delta</td>
+<td>1</td>
+<td>0.832915185274</td>
+<td>0.328233255849</td>
+</tr>
+<tr>
+<td>target__fatigue_delta</td>
+<td>0.832915185274</td>
+<td>1</td>
+<td>0.444862215213</td>
+</tr>
+<tr>
+<td>target__reaction_time_delta</td>
+<td>0.328233255849</td>
+<td>0.444862215213</td>
+<td>1</td>
+</tr>
+</table>
+</body></html>

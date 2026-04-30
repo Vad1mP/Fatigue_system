@@ -1,0 +1,4 @@
+target,label,direction,normalized_as,horizon,weight,n_total_days,n_valid,missing_ratio,n_unique,min,median,max,iqr
+target__subjective_strain_delta,target__subjective_strain_delta,higher_worse,higher_worse,,1,22,21,0.0454545454545,21,-1.78787878788,0.252525252525,2.625,1.27272727273
+target__fatigue_delta,target__fatigue_delta,higher_worse,higher_worse,,1,22,21,0.0454545454545,8,-3,1,5,2
+target__reaction_time_delta,target__reaction_time_delta,higher_worse,higher_worse,,1,22,21,0.0454545454545,14,-12,1,17,9

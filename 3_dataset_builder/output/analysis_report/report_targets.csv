@@ -1,0 +1,5 @@
+﻿target,column,label,direction,horizon,data_type,scale_type,present,n_total,n_valid,valid_ratio,n_missing,missing_ratio,n_unique,mean,median,std,iqr,min,max,usable,reason
+subjective_strain_delta,target__subjective_strain_delta,Acute subjective strain response,higher_worse,acute,numeric,ordinal,True,22,21,0.9545454545454546,1,0.045454545454545456,21,0.4428932178932179,0.2525252525252526,1.0409634917271493,1.2727272727272725,-1.7878787878787876,2.625,True,ok
+fatigue_delta,target__fatigue_delta,Acute subjective fatigue response,higher_worse,acute,numeric,ordinal,True,22,21,0.9545454545454546,1,0.045454545454545456,8,0.9523809523809523,1.0,1.883512423006296,2.0,-3.0,5.0,True,ok
+reaction_time_delta,target__reaction_time_delta,Acute reaction time response,higher_worse,acute,numeric,continuous,True,22,21,0.9545454545454546,1,0.045454545454545456,14,1.8571428571428572,1.0,7.831256056889687,9.0,-12.0,17.0,True,ok
+readiness_before,target__readiness_before,Pre-training readiness,higher_better,pre_training,numeric,ordinal,True,22,22,1.0,0,0.0,15,5.420454545454546,5.416666666666666,0.8231429607391014,1.041666666666666,4.0,7.0,True,ok

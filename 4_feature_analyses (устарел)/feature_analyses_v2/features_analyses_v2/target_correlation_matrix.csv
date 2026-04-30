@@ -1,0 +1,4 @@
+target,target__subjective_strain_delta,target__fatigue_delta,target__reaction_time_delta
+target__subjective_strain_delta,1,0.832915185274,0.328233255849
+target__fatigue_delta,0.832915185274,1,0.444862215213
+target__reaction_time_delta,0.328233255849,0.444862215213,1

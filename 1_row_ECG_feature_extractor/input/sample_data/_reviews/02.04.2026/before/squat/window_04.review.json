@@ -1,0 +1,59 @@
+{
+  "signal_review": {
+    "status": "skipped",
+    "signal": null,
+    "signal_filtered": null,
+    "rpeaks": null,
+    "rpeaks_no_edge": null,
+    "sampling_rate": 234.45,
+    "log": [
+      {
+        "action": "skip"
+      }
+    ],
+    "qc": {
+      "clipping_ratio": 0.05802047781569966,
+      "rr_phys_bad_ratio": 0.0,
+      "n_rpeaks": 8,
+      "mean_hr_bpm_rough": 103.65157894736844
+    }
+  },
+  "hrv_review": {
+    "status": "skipped",
+    "qc_gate": {
+      "passed": false,
+      "stage": "signal",
+      "reasons": [
+        "manual_window_rpeak_review_skipped"
+      ]
+    },
+    "source": "manual",
+    "log": [
+      {
+        "action": "manual_window_hrv_skip"
+      }
+    ]
+  },
+  "morphology_review": {
+    "status": "not_run",
+    "qc": null,
+    "qc_gate": null,
+    "features_preview": null,
+    "corr_threshold": null,
+    "error": null,
+    "log": []
+  },
+  "meta": {
+    "date": "02.04.2026",
+    "phase": "before",
+    "record_type": "squat",
+    "sampling_rate": 234.45,
+    "segment_label": "window",
+    "segment_start_sec": 15.0,
+    "segment_end_sec": 20.0,
+    "segment_window_idx": 4,
+    "window_idx": 4,
+    "start_sec": 15.0,
+    "end_sec": 20.0
+  }
+}

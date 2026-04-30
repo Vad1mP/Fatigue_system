@@ -1,0 +1,29 @@
+{
+  "dataset": "analysis_outputs\\analysis_dataset.csv",
+  "catalog": "analysis_outputs\\analysis_feature_catalog_v3.csv",
+  "protocol": "feature_analysis_protocol_block_v3.yaml",
+  "output_dir": "Analiz_v3",
+  "n_days": 22,
+  "n_dataset_columns": 520,
+  "target_analysis": {
+    "n_targets": 3,
+    "targets": [
+      "target__subjective_strain_delta",
+      "target__fatigue_delta",
+      "target__reaction_time_delta"
+    ]
+  },
+  "feature_analysis": {
+    "n_candidate_input_columns": 364,
+    "n_association_rows": 750,
+    "n_rejected_rows": 1003,
+    "n_validated_rows": 5,
+    "n_final_candidates": 4
+  },
+  "notes": [
+    "Targets are normalized so that higher target values mean worse state / stronger fatigue.",
+    "Spearman correlation is used as a rank-based monotonic association measure.",
+    "Direction stability is computed by leave-one-out resampling.",
+    "Redundancy clusters are based on absolute Spearman correlation between validated features."
+  ]
+}

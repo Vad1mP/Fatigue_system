@@ -1,0 +1,5 @@
+﻿target,n_samples,n_usable_features_by_overlap,feature_sample_ratio,recommended_use,warning
+subjective_strain_delta,21,397,18.904761904761905,diagnostic_only,too_many_features_for_samples
+fatigue_delta,21,397,18.904761904761905,diagnostic_only,too_many_features_for_samples
+reaction_time_delta,21,397,18.904761904761905,diagnostic_only,too_many_features_for_samples
+readiness_before,22,398,18.09090909090909,diagnostic_only,too_many_features_for_samples

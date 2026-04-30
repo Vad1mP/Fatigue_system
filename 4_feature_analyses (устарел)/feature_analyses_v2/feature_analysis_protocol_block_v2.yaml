@@ -1,0 +1,86 @@
+feature_analysis:
+  enabled: true
+
+  inputs:
+    dataset: "analysis_dataset.csv"
+    feature_catalog: "analysis_feature_catalog.csv"
+
+  outputs:
+    output_dir: "feature_analysis_v3"
+
+  # Этап 1: диагностика согласованности target.
+  target_analysis:
+    enabled: true
+    # Внутри анализа все target приводятся к смыслу: больше = хуже / больше утомление.
+    # higher_worse используется как есть, higher_better умножается на -1.
+    targets:
+      - column: "target__subjective_strain_delta"
+        direction: "higher_worse"
+        weight: 1.0
+      - column: "target__fatigue_delta"
+        direction: "higher_worse"
+        weight: 1.0
+      - column: "target__reaction_time_delta"
+        direction: "higher_worse"
+        weight: 1.0
+      # readiness_before лучше анализировать отдельной группой pre-training targets,
+      # а не смешивать с acute after-before response.
+      # - column: "target__readiness_before"
+      #   direction: "higher_better"
+      #   weight: 1.0
+
+  # Этап 2: выбор input-признаков для валидации.
+  feature_scope:
+    selection_mode: "auto"      # auto | manual | auto_plus_manual
+    ecg_only: true              # true = валидируем только ЭКГ-признаки
+    access_mode: "all"          # all | before | after | delta
+    # access_modes: ["before", "delta"]
+    manual_features: []
+    exclude_roles:
+      - "target"
+      - "meta"
+      - "qc"
+      - "technical"
+
+  leakage_control:
+    enabled: true
+    exclude_exact_target_duplicates: true
+    exclude_same_source_operation: true
+    # Самый простой и защищаемый способ исключать компоненты target вручную.
+    forbidden_features_by_target: {}
+
+  quality_rules:
+    min_overlap_n: 10
+    max_missing_ratio: 0.5
+    min_unique_values: 4
+
+  association:
+    method: "spearman"
+    min_abs_spearman: 0.3
+    leave_one_out_direction_stability: true
+    min_direction_stability: 0.7
+
+  # Строгая multi-target валидация: признак должен пройти все выбранные target
+  # и сохранить одно направление связи после нормализации target.
+  multi_target_validation:
+    require_pass_all_targets: true
+    require_consistent_direction: true
+    min_cross_target_direction_consistency: 1.0
+    # Более мягкий режим, если target много и они не идеально согласованы:
+    # require_pass_all_targets: false
+    # min_targets_pass: 2
+    # min_cross_target_direction_consistency: 0.67
+
+  redundancy:
+    enabled: true
+    method: "spearman"
+    threshold_abs_corr: 0.85
+    choose_representative_by: "final_rank_score"
+    keep_redundant_alternatives: true
+
+  ranking:
+    rank_score:
+      formula: "weighted_sum"
+      weights:
+        abs_spearman: 0.7
+        direction_stability: 0.3

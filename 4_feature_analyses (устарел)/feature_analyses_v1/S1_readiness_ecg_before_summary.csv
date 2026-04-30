@@ -1,0 +1,9 @@
+metric,value
+n_observations,22.0
+n_subjects,1.0
+n_features,78.0
+target_valid_count,22.0
+features_recommended,4.0
+median_valid_fraction,0.9545454545454546
+median_abs_spearman,0.17933323031326862
+max_abs_spearman,0.7164977208318386
